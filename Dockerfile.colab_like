@@ -1,0 +1,19 @@
+FROM nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update
+RUN apt-get install -y wget
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh \
+    && bash miniconda.sh -b -p /opt/conda \
+    && rm miniconda.sh
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Install Jupyter and Colab dependencies
+RUN conda install -y jupyter jupyterlab numpy pandas matplotlib seaborn \
+    && pip install ipykernel
+RUN apt-get install -y python3-setuptools python3-pip
+# RUN apt-get install -y python3.10-venv
+WORKDIR /workspace
+EXPOSE 8888
+CMD echo "$(python3 --version)"
